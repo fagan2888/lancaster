@@ -1,0 +1,30 @@
+package:
+  name: avro-python3
+  version: 1.7.7
+
+source:
+  fn: avro-python3-1.7.7.tar.gz
+  url: https://pypi.python.org/packages/source/a/avro-python3/avro-python3-1.7.7.tar.gz
+  patches:
+    - AVRO-1673.patch
+
+requirements:
+  build:
+    - python
+    - setuptools
+
+  run:
+    - python
+
+build:
+  script:
+    - python setup.py install
+
+test:
+  imports:
+    - avro
+
+about:
+  home: http://hadoop.apache.org/avro
+  license: Apache License 2.0
+  summary: 'Avro is a serialization and RPC framework.'

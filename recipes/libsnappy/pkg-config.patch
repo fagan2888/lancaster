@@ -1,0 +1,40 @@
+diff --git a/Makefile.am b/Makefile.am
+index 735bc12..e7ac948 100644
+--- Makefile.am
++++ Makefile.am
+@@ -19,5 +19,8 @@ noinst_PROGRAMS = $(TESTS)
+ EXTRA_DIST = autogen.sh testdata/alice29.txt testdata/asyoulik.txt testdata/baddata1.snappy testdata/baddata2.snappy testdata/baddata3.snappy testdata/geo.protodata testdata/fireworks.jpeg testdata/html testdata/html_x_4 testdata/kppkn.gtb testdata/lcet10.txt testdata/paper-100k.pdf testdata/plrabn12.txt testdata/urls.10K
+ dist_doc_DATA = ChangeLog COPYING INSTALL NEWS README format_description.txt framing_format.txt
+ 
++pkgconfiglibdir = $(libdir)/pkgconfig
++pkgconfiglib_DATA = libsnappy.pc
++
+ libtool: $(LIBTOOL_DEPS)
+ 	$(SHELL) ./config.status --recheck
+diff --git a/configure.ac b/configure.ac
+index 3660a5c..ef00e96 100644
+--- configure.ac
++++ configure.ac
+@@ -129,5 +129,5 @@ AC_SUBST([SNAPPY_PATCHLEVEL])
+ AC_SUBST([SNAPPY_LTVERSION], snappy_ltversion)
+ 
+ AC_CONFIG_HEADERS([config.h])
+-AC_CONFIG_FILES([Makefile snappy-stubs-public.h])
++AC_CONFIG_FILES([Makefile snappy-stubs-public.h libsnappy.pc])
+ AC_OUTPUT
+diff --git a/libsnappy.pc.in b/libsnappy.pc.in
+new file mode 100644
+index 0000000..bca1b10
+--- /dev/null
++++ libsnappy.pc.in
+@@ -0,0 +1,10 @@
++prefix=@prefix@
++exec_prefix=@exec_prefix@
++libdir=@libdir@
++includedir=@includedir@
++
++Name: libsnappy
++Description: snappy compression library
++URL: https://github.com/google/snappy
++Version: @VERSION@
++Libs: -lsnappy

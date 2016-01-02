@@ -1,0 +1,34 @@
+package:
+  name: lancaster
+  version: {{ environ.get('GIT_DESCRIBE_TAG') }}
+ 
+source:
+  git_url: ../../.git
+  git_tag: 0.1.0
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - libavro
+  run:
+    - python
+    - libavro
+
+build:
+  script:
+    - python setup.py install
+
+test:
+  requires:
+    - avro-python3
+    - pytest
+  files:
+    - ../../test/test_bench.py
+  commands:
+    - py.test
+
+about:
+  home: https://github.com/leifwalsh/lancaster
+  license: MIT
+  license_file: LICENSE

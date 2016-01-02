@@ -1,0 +1,13 @@
+package:
+  name: libsnappy
+  version: 1.1.3
+
+source:
+  fn: snappy-1.1.3.tar.gz
+  url: https://github.com/google/snappy/releases/download/1.1.3/snappy-1.1.3.tar.gz
+
+  patches:
+    - pkg-config.patch
+
+build:
+  number: 1

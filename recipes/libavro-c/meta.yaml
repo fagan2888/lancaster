@@ -1,0 +1,20 @@
+package:
+  name: libavro
+  version: 1.7.7
+
+source:
+  fn: avro-c-1.7.7.tar.gz
+  url: http://apache.arvixe.com/avro/avro-1.7.7/c/avro-c-1.7.7.tar.gz
+
+  patches:
+    - snappy.patch
+
+requirements:
+  build:
+    - cmake
+    - libsnappy
+  run:
+    - libsnappy
+
+build:
+  number: 1

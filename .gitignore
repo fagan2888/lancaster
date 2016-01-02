@@ -1,0 +1,6 @@
+.cache/
+.eggs/
+Lancaster.egg-info/
+build/
+dist/
+*.so
