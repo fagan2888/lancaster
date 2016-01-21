@@ -79,7 +79,8 @@ avro_to_py(avro_schema_t schema, avro_value_t *value) {
 
         const char *name;
         avro_value_t field_val;
-        for (size_t i = 0; i < num_fields; ++i) {
+        size_t i;
+        for (i = 0; i < num_fields; ++i) {
             const avro_schema_t field_schema = (type == AVRO_RECORD
                                                 ? avro_schema_record_field_get_by_index(schema, i)
                                                 : avro_schema_map_values(schema));
@@ -117,7 +118,8 @@ avro_to_py(avro_schema_t schema, avro_value_t *value) {
         }
 
         avro_value_t field_val;
-        for (size_t i = 0; i < num_fields; ++i) {
+        size_t i;
+        for (i = 0; i < num_fields; ++i) {
             check(decref_list, avro_value_get_by_index(value, i, &field_val, NULL));
             PyObject *py_field_val = avro_to_py(items_schema, &field_val);
             if (py_field_val == NULL) {
