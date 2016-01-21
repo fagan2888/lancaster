@@ -22,7 +22,7 @@ python versions of the avro data (dicts, lists, ints, strings).
 Installation
 ------------
 
-A conda package is provided (TODO: link to it)
+A conda package is provided at [anaconda.org][anaconda].
 
 Caveats
 -------
@@ -36,6 +36,7 @@ License
 
 Copyright 2016 Leif Walsh.  [MIT licensed][license].
 
+[anaconda]: https://anaconda.org/leif/lancaster
 [avro]: https://avro.apache.org/
 [avro-c]: http://avro.apache.org/docs/1.7.7/api/c/index.html
 [license]: https://github.com/leifwalsh/lancaster/blob/master/LICENSE
