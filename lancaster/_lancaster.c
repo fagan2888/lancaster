@@ -230,7 +230,18 @@ avro_to_simple_value(avro_schema_t schema, avro_value_t *value) {
         }
         return PyUnicode_FromString(enum_str);
     }
-    case AVRO_UNION:
+    case AVRO_UNION: {
+        // unions are how avro handles nullable data, so we need to support it
+        int discriminant;
+        check(null_exit, avro_value_get_discriminant(value, &discriminant));
+        avro_schema_t branch_schema = avro_schema_union_branch(schema, discriminant);
+        if (branch_schema == NULL) {
+            goto null_exit;
+        }
+        avro_value_t branch;
+        check(null_exit, avro_value_get_current_branch(value, &branch));
+        return avro_to_simple_value(branch_schema, &branch);
+    }
     case AVRO_MAP:
     case AVRO_RECORD:
     case AVRO_ARRAY:

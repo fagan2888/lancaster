@@ -19,7 +19,7 @@ with open('data.avro', 'rb') as f:
 __author__ = "Leif Walsh"
 __copyright__ = "Copyright 2016 Leif Walsh"
 __license__ = "MIT"
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __maintainer__ = "Leif Walsh"
 __email__ = "leif.walsh@gmail.com"
 
