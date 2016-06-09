@@ -22,7 +22,7 @@ except subprocess.CalledProcessError:
     extension_kwargs = {'libraries': ['avro', 'z', 'lzma', 'snappy']}
 
 setup(name        = 'Lancaster',
-      version     = '0.1.2',
+      version     = '0.2.0',
       description = 'A python extension wrapper for avro-c',
       packages    = ['lancaster'],
       ext_modules = [Extension('lancaster._lancaster',

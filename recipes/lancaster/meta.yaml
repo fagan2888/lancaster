@@ -4,7 +4,7 @@ package:
  
 source:
   git_url: ../../.git
-  git_tag: 0.1.2
+  git_tag: 0.2.0
 
 requirements:
   build:

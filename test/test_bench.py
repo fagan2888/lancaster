@@ -54,6 +54,9 @@ def avro_read(n, f):
 def lancaster_read(f):
     yield from lancaster.read_stream(schema, f)
 
+def lancaster_read_tuples(f):
+    yield from lancaster.read_stream_tuples(schema, f)
+
 class Timer(object):
     def __enter__(self):
         self.start = time.clock()
@@ -92,9 +95,19 @@ def test_main(N=10000):
         print('  in {:3.02f}s ({:3.02f}us per value / {:3.02f}MB/s)'.format(
             lt.interval, 1000000 * lt.interval/len(lancaster_values), filesize / lt.interval / 1024 / 1024))
 
+        with Timer() as lt2:
+            with open(filename, 'rb') as f:
+                lancaster_tuples = list(lancaster_read_tuples(f))
+
+        print('lancaster read  {} tuples like {}'.format(len(lancaster_tuples), lancaster_tuples[0]))
+        print('  in {:3.02f}s ({:3.02f}us per value / {:3.02f}MB/s)'.format(
+            lt2.interval, 1000000 * lt2.interval/len(lancaster_tuples), filesize / lt2.interval / 1024 / 1024))
+
         print('avro-py3 takes {:3.02f}x as long as lancaster'.format(at.interval / lt.interval))
+        print('avro-py3 takes {:3.02f}x as long as lancaster to tuples'.format(at.interval / lt2.interval))
 
         assert len(avro_values) == len(lancaster_values)
+        assert len(avro_values) == len(lancaster_tuples)
         for av, lv in zip(avro_values, lancaster_values):
             for k, v in av.items():
                 assert k in lv
