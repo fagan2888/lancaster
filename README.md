@@ -34,9 +34,9 @@ accept pull requests but I don't need those features personally yet.
 License
 -------
 
-Copyright 2016 Leif Walsh.  [MIT licensed][license].
+Copyright 2016 Two Sigma Open Source, LLC.  [MIT licensed][license].
 
 [anaconda]: https://anaconda.org/leif/lancaster
 [avro]: https://avro.apache.org/
 [avro-c]: http://avro.apache.org/docs/1.7.7/api/c/index.html
-[license]: https://github.com/leifwalsh/lancaster/blob/master/LICENSE
+[license]: https://github.com/twosigma/lancaster/blob/master/LICENSE

@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 Leif Walsh
+ * Copyright 2016 Two Sigma Open Source, LLC.
  */
 
 #include <Python.h>

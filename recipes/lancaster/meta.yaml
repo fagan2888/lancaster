@@ -29,6 +29,6 @@ test:
     - py.test
 
 about:
-  home: https://github.com/leifwalsh/lancaster
+  home: https://github.com/twosigma/lancaster
   license: MIT
   license_file: LICENSE
