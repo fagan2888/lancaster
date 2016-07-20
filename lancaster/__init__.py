@@ -29,37 +29,36 @@ import io
 from   . import _lancaster
 
 
-def read_stream(schema, stream, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def read_stream(schema, stream, datetime_flags=None, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
     :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
+    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
+    :param buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python data structures deserialized from the stream
     """
-    reader = _lancaster.Reader(schema)
+    if datetime_flags is not None:
+        reader = _lancaster.Reader(schema, datetime_flags)
+    else:
+        reader = _lancaster.Reader(schema)
     buf = stream.read(buffer_size)
     remainder = b''
     while len(buf) > 0:
         values, n = reader.read_seq(buf)
         yield from values
         remainder = buf[n:]
-        try:
-            buf = stream.read(buffer_size)
-        except ValueError:
-            break
-        if len(remainder) > 0:
-            if len(buf) == 0:
-                break
+        buf = stream.read(buffer_size)
+        if len(buf) > 0 and len(remainder) > 0:
             ba = bytearray()
             ba.extend(remainder)
             ba.extend(buf)
             buf = memoryview(ba).tobytes()
-    else:
-        if len(remainder) > 0:
-            raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
+    if len(remainder) > 0:
+        raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
 
 
-def read_stream_tuples(schema, stream, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def read_stream_tuples(schema, stream, datetime_flags=None, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values
     into tuples.
 
@@ -68,27 +67,26 @@ def read_stream_tuples(schema, stream, buffer_size=io.DEFAULT_BUFFER_SIZE):
 
     :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
+    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
+    :param buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python tuples deserialized from the stream
 
     """
-    reader = _lancaster.Reader(schema)
+    if datetime_flags is not None:
+        reader = _lancaster.Reader(schema, datetime_flags)
+    else:
+        reader = _lancaster.Reader(schema)
     buf = stream.read(buffer_size)
     remainder = b''
     while len(buf) > 0:
         values, n = reader.read_seq_tuples(buf)
         yield from values
         remainder = buf[n:]
-        try:
-            buf = stream.read(buffer_size)
-        except ValueError:
-            break
-        if len(remainder) > 0:
-            if len(buf) == 0:
-                break
+        buf = stream.read(buffer_size)
+        if len(buf) > 0 and len(remainder) > 0:
             ba = bytearray()
             ba.extend(remainder)
             ba.extend(buf)
             buf = memoryview(ba).tobytes()
-    else:
-        if len(remainder) > 0:
-            raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
+    if len(remainder) > 0:
+        raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))

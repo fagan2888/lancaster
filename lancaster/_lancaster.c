@@ -3,13 +3,33 @@
  */
 
 #include <Python.h>
+#include <datetime.h>
+#include <time.h>
 
 #include <avro.h>
 
 static PyObject *
-avro_to_dict(avro_schema_t schema, avro_value_t *value);
+avro_to_dict(avro_schema_t schema, avro_value_t *value, int *datetime_flags);
+
 static PyObject *
-avro_to_dict(avro_schema_t schema, avro_value_t *value) {
+long_to_datetime(PyObject *py_nanos) {
+    PyObject *py_datetime = NULL;
+    if (py_nanos != Py_None) {
+        int64_t epoch_1900_nanos = PyLong_AsLong(py_nanos);
+        time_t epoch_1900_secs = (time_t)(epoch_1900_nanos / 1000000000);
+        int usecs = epoch_1900_nanos % 1000000000 / 1000;
+        struct tm t;
+        // localtime_r is posix standard and thread-safe but not a C standard function.
+        localtime_r(&epoch_1900_secs, &t);
+        // PyDateTime_FromDateAndTime(int year, int month, int day, int hour, int minute, int second, int usecond)
+        // performans much better than PyDateTime_FromTimestamp(PyObject *args)
+        py_datetime = PyDateTime_FromDateAndTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, usecs);
+    }
+    return py_datetime;
+}
+
+static PyObject *
+avro_to_dict(avro_schema_t schema, avro_value_t *value, int *datetime_flags) {
 
 #define check(label, x) do {                                            \
         if ((x)) {                                                      \
@@ -88,7 +108,9 @@ avro_to_dict(avro_schema_t schema, avro_value_t *value) {
                 goto decref_dict;
             }
             check(decref_dict, avro_value_get_by_index(value, i, &field_val, &name));
-            PyObject *py_field_val = avro_to_dict(field_schema, &field_val);
+            PyObject *py_field_val = avro_to_dict(field_schema, &field_val, NULL);
+            if (datetime_flags != NULL && datetime_flags[i])
+                py_field_val = long_to_datetime(py_field_val);
             if (py_field_val == NULL) {
                 goto decref_dict;
             }
@@ -121,7 +143,7 @@ avro_to_dict(avro_schema_t schema, avro_value_t *value) {
         size_t i;
         for (i = 0; i < num_fields; ++i) {
             check(decref_list, avro_value_get_by_index(value, i, &field_val, NULL));
-            PyObject *py_field_val = avro_to_dict(items_schema, &field_val);
+            PyObject *py_field_val = avro_to_dict(items_schema, &field_val, NULL);
             if (py_field_val == NULL) {
                 goto decref_list;
             }
@@ -141,7 +163,7 @@ avro_to_dict(avro_schema_t schema, avro_value_t *value) {
         }
         avro_value_t branch;
         check(null_exit, avro_value_get_current_branch(value, &branch));
-        return avro_to_dict(branch_schema, &branch);
+        return avro_to_dict(branch_schema, &branch, NULL);
     }
     case AVRO_ENUM: {
         int enum_val;
@@ -257,7 +279,7 @@ avro_to_simple_value(avro_schema_t schema, avro_value_t *value) {
 }
 
 static PyObject *
-avro_to_tuple(avro_schema_t schema, avro_value_t *value) {
+avro_to_tuple(avro_schema_t schema, avro_value_t *value, int *datetime_flags) {
 
 #define check(label, x) do {                                            \
         if ((x)) {                                                      \
@@ -287,6 +309,8 @@ avro_to_tuple(avro_schema_t schema, avro_value_t *value) {
             }
             check(decref_tuple, avro_value_get_by_index(value, i, &field_val, &name));
             PyObject *py_field_val = avro_to_simple_value(field_schema, &field_val);
+            if (datetime_flags != NULL && datetime_flags[i])
+                 py_field_val = long_to_datetime(py_field_val);
             if (py_field_val == NULL) {
                 goto decref_tuple;
             }
@@ -363,6 +387,8 @@ typedef struct {
     avro_schema_t schema;
     avro_value_iface_t *iface;
     avro_value_t value;
+    int *datetime_flags;
+    size_t num_fields;
 } Reader;
 
 static PyObject *
@@ -374,6 +400,8 @@ Reader_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     if (self != NULL) {
         self->schema = NULL;
         self->iface = NULL;
+        self->datetime_flags = NULL;
+        self->num_fields = 0;
     }
 
     return (PyObject *)self;
@@ -382,8 +410,12 @@ Reader_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static int
 Reader_init(Reader *self, PyObject *args, PyObject *kwds)
 {
+    PyDateTime_IMPORT;
     const char *schema_json;
-    if (!PyArg_ParseTuple(args, "s", &schema_json)) {
+    PyObject *datetime_flags = NULL;
+    int i = 0, num_fields;
+
+    if (!PyArg_ParseTuple(args, "s|O", &schema_json, &datetime_flags)) {
         return -1;
     }
 
@@ -411,6 +443,14 @@ Reader_init(Reader *self, PyObject *args, PyObject *kwds)
 
     self->schema = schema;
     self->iface = iface;
+    if (datetime_flags != NULL) {
+        num_fields = PyList_Size(datetime_flags);
+        self->datetime_flags = (int *)malloc(sizeof(int) * num_fields);
+        for (i=0; i<num_fields; i++) {
+            PyObject *elem = PyList_GetItem(datetime_flags, i);
+            self->datetime_flags[i] = PyObject_IsTrue(elem);
+        }
+    }
 
     return 0;
 }
@@ -422,6 +462,7 @@ Reader_dealloc(Reader* self)
         avro_value_decref(&self->value);
         avro_value_iface_decref(self->iface);
         avro_schema_decref(self->schema);
+        free(self->datetime_flags);
     }
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
@@ -459,7 +500,7 @@ Reader_read_seq(Reader* self, PyObject *args)
     size_t last_bytes_read = 0;
     while ((r = avro_value_read(reader, &self->value)) == 0) {
         last_bytes_read = avro_reader_memory_bytes_read(reader);
-        PyObject *py_value = avro_to_dict(self->schema, &self->value);
+        PyObject *py_value = avro_to_dict(self->schema, &self->value, self->datetime_flags);
         if (py_value == NULL) {
             goto err2;
         }
@@ -532,7 +573,7 @@ Reader_read_seq_tuples(Reader* self, PyObject *args)
     size_t last_bytes_read = 0;
     while ((r = avro_value_read(reader, &self->value)) == 0) {
         last_bytes_read = avro_reader_memory_bytes_read(reader);
-        PyObject *py_value = avro_to_tuple(self->schema, &self->value);
+        PyObject *py_value = avro_to_tuple(self->schema, &self->value, self->datetime_flags);
         if (py_value == NULL) {
             goto err2;
         }

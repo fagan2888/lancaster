@@ -2,10 +2,12 @@
 
 import io
 import os
-from   random   import choice, sample
-from   string   import ascii_letters, digits
 import tempfile
 import time
+from   random      import choice, sample, randint
+from   string      import ascii_letters, digits
+from   datetime    import datetime
+from   collections import OrderedDict
 
 import avro.io
 import avro.schema
@@ -25,18 +27,35 @@ schema = '''{"type":"record",
      {"name": "ID", "type": "long"},
      {"name": "First", "type": "string"},
      {"name": "Last", "type": "string"},
+     {"name": "Birthday", "type": "long"},
      {"name": "Phone", "type": "string"},
      {"name": "Age", "type": "int"},
      {"name": "Suit", "type": {"type": "enum", "name": "suits", "symbols": [%s]}}]}''' % ','.join('"{}"'.format(v) for v in enum_vals)
 
+datetime_flags_dict = OrderedDict([
+    ("ID",       False),
+    ("First",    False),
+    ("Last",     False),
+    ("Birthday", True),
+    ("Phone",    False),
+    ("Age",      False),
+    ("Suit",     False)
+])
+datetime_flags = list(datetime_flags_dict.values())
+
+def convert_nanos_to_datetime(val):
+    t = datetime.fromtimestamp(val * 1e-9)
+    return t.replace(microsecond = int(val % 1000000000 / 1000))
+
 def gen_person(i):
     return {
-        'ID':    i,
-        'First': ''.join(sample(ascii_letters, 12)),
-        'Last':  ''.join(sample(ascii_letters, 15)),
-        'Phone': ''.join(sample(digits, 10)),
-        'Age':   choice(range(100)),
-        'Suit':  choice(enum_vals)
+        'ID':       i,
+        'First':    ''.join(sample(ascii_letters, 12)),
+        'Last':     ''.join(sample(ascii_letters, 15)),
+        'Birthday': randint(1000000000000000000, 2000000000000000000),
+        'Phone':    ''.join(sample(digits, 10)),
+        'Age':      choice(range(100)),
+        'Suit':     choice(enum_vals)
     }
 
 def gen_data(n, f):
@@ -52,10 +71,10 @@ def avro_read(n, f):
         yield reader.read(decoder)
 
 def lancaster_read(f):
-    yield from lancaster.read_stream(schema, f)
+    yield from lancaster.read_stream(schema, f, datetime_flags)
 
 def lancaster_read_tuples(f):
-    yield from lancaster.read_stream_tuples(schema, f)
+    yield from lancaster.read_stream_tuples(schema, f, datetime_flags)
 
 class Timer(object):
     def __enter__(self):
@@ -111,10 +130,10 @@ def test_main(N=10000):
         for av, lv in zip(avro_values, lancaster_values):
             for k, v in av.items():
                 assert k in lv
-                assert lv[k] == v
+                assert lv[k] == (convert_nanos_to_datetime(v) if datetime_flags_dict[k] else v)
             for k, v in lv.items():
                 assert k in av
-                assert av[k] == v
+                assert (convert_nanos_to_datetime(av[k]) if datetime_flags_dict[k] else av[k]) == v
     finally:
         os.remove(filename)
 
