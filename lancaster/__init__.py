@@ -19,7 +19,7 @@ with open('data.avro', 'rb') as f:
 __author__ = "Leif Walsh"
 __copyright__ = "Copyright 2016 Two Sigma Open Source, LLC."
 __license__ = "MIT"
-__version__ = "0.2.1"
+__version__ = "0.3.0"
 __maintainer__ = "Leif Walsh"
 __email__ = "leif@twosigma.com"
 
@@ -29,13 +29,13 @@ import io
 from   . import _lancaster
 
 
-def read_stream(schema, stream, datetime_flags=None, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE, datetime_flags=None):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
     :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
-    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :param buffer_size: size of bytes to read from the stream each time
+    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :return: yields a sequence of python data structures deserialized from the stream
     """
     if datetime_flags is not None:
@@ -58,7 +58,7 @@ def read_stream(schema, stream, datetime_flags=None, buffer_size=io.DEFAULT_BUFF
         raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
 
 
-def read_stream_tuples(schema, stream, datetime_flags=None, buffer_size=io.DEFAULT_BUFFER_SIZE):
+def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE, datetime_flags=None):
     """Using a schema, deserialize a stream of consecutive Avro values
     into tuples.
 
@@ -67,8 +67,8 @@ def read_stream_tuples(schema, stream, datetime_flags=None, buffer_size=io.DEFAU
 
     :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
-    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :param buffer_size: size of bytes to read from the stream each time
+    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :return: yields a sequence of python tuples deserialized from the stream
 
     """

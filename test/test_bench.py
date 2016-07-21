@@ -71,10 +71,10 @@ def avro_read(n, f):
         yield reader.read(decoder)
 
 def lancaster_read(f):
-    yield from lancaster.read_stream(schema, f, datetime_flags)
+    yield from lancaster.read_stream(schema, f, datetime_flags=datetime_flags)
 
 def lancaster_read_tuples(f):
-    yield from lancaster.read_stream_tuples(schema, f, datetime_flags)
+    yield from lancaster.read_stream_tuples(schema, f, datetime_flags=datetime_flags)
 
 class Timer(object):
     def __enter__(self):
