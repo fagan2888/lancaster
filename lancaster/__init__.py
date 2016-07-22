@@ -40,7 +40,8 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
 
     :param str schema: json string representing the Avro schema, field
                        names may include 'is_datetime' boolean fields
-                       to force decoding into datetime objects
+                       to force decoding long values of epoch nanoseconds
+                       into datetime objects
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python data structures deserialized from the stream
@@ -72,7 +73,8 @@ def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
 
     :param str schema: json string representing the Avro schema, field
                        names may include 'is_datetime' boolean fields
-                       to force decoding into datetime objects
+                       to force decoding long values of epoch nanoseconds
+                       into datetime objects
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python tuples deserialized from the stream
