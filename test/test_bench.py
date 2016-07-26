@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
+from   datetime import datetime
 import io
 import json
 import os
 import tempfile
+import random
+import string
 import time
-from   random      import choice, sample, randint
-from   string      import ascii_letters, digits
-from   datetime    import datetime
-from   collections import OrderedDict
 
 import avro.io
 import avro.schema
@@ -42,12 +41,12 @@ def convert_nanos_to_datetime(val):
 def gen_person(i):
     return {
         'ID':       i,
-        'First':    ''.join(sample(ascii_letters, 12)),
-        'Last':     ''.join(sample(ascii_letters, 15)),
-        'Birthday': randint(1000000000000000000, 2000000000000000000),
-        'Phone':    ''.join(sample(digits, 10)),
-        'Age':      choice(range(100)),
-        'Suit':     choice(enum_vals)
+        'First':    ''.join(random.sample(string.ascii_letters, 12)),
+        'Last':     ''.join(random.sample(string.ascii_letters, 15)),
+        'Birthday': random.randint(1000000000000000000, 2000000000000000000),
+        'Phone':    ''.join(random.sample(string.digits, 10)),
+        'Age':      random.choice(range(100)),
+        'Suit':     random.choice(enum_vals)
     }
 
 def gen_data(n, f):
