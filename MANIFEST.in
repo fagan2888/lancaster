@@ -1,0 +1,2 @@
+include versioneer.py
+include lancaster/_version.py

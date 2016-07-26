@@ -2,6 +2,7 @@ from   setuptools import setup, Extension
 import os
 import os.path
 import subprocess
+import versioneer
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
@@ -22,7 +23,8 @@ except subprocess.CalledProcessError:
     extension_kwargs = {'libraries': ['avro', 'z', 'lzma', 'snappy']}
 
 setup(name        = 'Lancaster',
-      version     = '0.2.1',
+      version     = versioneer.get_version(),
+      cmdclass    = versioneer.get_cmdclass(),
       description = 'A python extension wrapper for avro-c',
       packages    = ['lancaster'],
       ext_modules = [Extension('lancaster._lancaster',
