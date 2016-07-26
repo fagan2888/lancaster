@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+from   datetime import datetime
 import io
+import json
 import os
-from   random   import choice, sample
-from   string   import ascii_letters, digits
 import tempfile
+import random
+import string
 import time
 
 import avro.io
@@ -25,18 +27,27 @@ schema = '''{"type":"record",
      {"name": "ID", "type": "long"},
      {"name": "First", "type": "string"},
      {"name": "Last", "type": "string"},
+     {"name": "Birthday", "type": "long", "is_datetime": true},
      {"name": "Phone", "type": "string"},
      {"name": "Age", "type": "int"},
      {"name": "Suit", "type": {"type": "enum", "name": "suits", "symbols": [%s]}}]}''' % ','.join('"{}"'.format(v) for v in enum_vals)
 
+datetime_flags = {field['name']: field.get('is_datetime', False) for field in json.loads(schema)['fields']}
+ordered_field_names = [field['name'] for field in json.loads(schema)['fields']]
+
+def convert_nanos_to_datetime(val):
+    t = datetime.fromtimestamp(val * 1e-9)
+    return t.replace(microsecond = int(val % 1000000000 / 1000))
+
 def gen_person(i):
     return {
-        'ID':    i,
-        'First': ''.join(sample(ascii_letters, 12)),
-        'Last':  ''.join(sample(ascii_letters, 15)),
-        'Phone': ''.join(sample(digits, 10)),
-        'Age':   choice(range(100)),
-        'Suit':  choice(enum_vals)
+        'ID':       i,
+        'First':    ''.join(random.sample(string.ascii_letters, 12)),
+        'Last':     ''.join(random.sample(string.ascii_letters, 15)),
+        'Birthday': random.randint(1000000000000000000, 2000000000000000000),
+        'Phone':    ''.join(random.sample(string.digits, 10)),
+        'Age':      random.choice(range(100)),
+        'Suit':     random.choice(enum_vals)
     }
 
 def gen_data(n, f):
@@ -107,7 +118,6 @@ def test_main(N=10000):
         print('avro-py3 takes {:3.02f}x as long as lancaster to tuples'.format(at.interval / lt2.interval))
 
         assert len(avro_values) == len(lancaster_values)
-        assert len(avro_values) == len(lancaster_tuples)
         for av, lv in zip(avro_values, lancaster_values):
             for k, v in av.items():
                 assert k in lv
@@ -115,6 +125,17 @@ def test_main(N=10000):
             for k, v in lv.items():
                 assert k in av
                 assert av[k] == v
+
+        assert len(avro_values) == len(lancaster_tuples)
+        for av, lt in zip(avro_values, lancaster_tuples):
+            assert len(lt) == len(ordered_field_names)
+            lv = dict(zip(ordered_field_names, lt))
+            for k, v in av.items():
+                assert k in lv
+                assert lv[k] == (convert_nanos_to_datetime(v) if datetime_flags[k] else v)
+            for k, v in lv.items():
+                assert k in av
+                assert (convert_nanos_to_datetime(av[k]) if datetime_flags[k] else av[k]) == v
     finally:
         os.remove(filename)
 
