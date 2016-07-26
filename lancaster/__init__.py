@@ -33,10 +33,7 @@ from   . import _lancaster
 def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
-    :param str schema: json string representing the Avro schema, field
-                       names may include 'is_datetime' boolean fields
-                       to force decoding long values of epoch nanoseconds
-                       into datetime objects
+    :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python data structures deserialized from the stream
