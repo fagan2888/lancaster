@@ -30,11 +30,6 @@ import json
 from   . import _lancaster
 
 
-def _get_datetime_flags(schema):
-    jschema = json.loads(schema)
-    return [field.get('is_datetime', False) for field in jschema['fields']]
-
-
 def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
@@ -47,7 +42,7 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     :return: yields a sequence of python data structures deserialized from the stream
 
     """
-    reader = _lancaster.Reader(schema, _get_datetime_flags(schema))
+    reader = _lancaster.Reader(schema)
     buf = stream.read(buffer_size)
     remainder = b''
     while len(buf) > 0:
@@ -62,6 +57,11 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
             buf = memoryview(ba).tobytes()
     if len(remainder) > 0:
         raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
+
+
+def _get_datetime_flags(schema):
+    jschema = json.loads(schema)
+    return [field.get('is_datetime', False) for field in jschema['fields']]
 
 
 def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):

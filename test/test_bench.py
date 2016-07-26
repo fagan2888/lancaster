@@ -33,6 +33,7 @@ schema = '''{"type":"record",
      {"name": "Suit", "type": {"type": "enum", "name": "suits", "symbols": [%s]}}]}''' % ','.join('"{}"'.format(v) for v in enum_vals)
 
 datetime_flags = {field['name']: field.get('is_datetime', False) for field in json.loads(schema)['fields']}
+ordered_field_names = [field['name'] for field in json.loads(schema)['fields']]
 
 def convert_nanos_to_datetime(val):
     t = datetime.fromtimestamp(val * 1e-9)
@@ -117,8 +118,18 @@ def test_main(N=10000):
         print('avro-py3 takes {:3.02f}x as long as lancaster to tuples'.format(at.interval / lt2.interval))
 
         assert len(avro_values) == len(lancaster_values)
-        assert len(avro_values) == len(lancaster_tuples)
         for av, lv in zip(avro_values, lancaster_values):
+            for k, v in av.items():
+                assert k in lv
+                assert lv[k] == v
+            for k, v in lv.items():
+                assert k in av
+                assert av[k] == v
+
+        assert len(avro_values) == len(lancaster_tuples)
+        for av, lt in zip(avro_values, lancaster_tuples):
+            assert len(lt) == len(ordered_field_names)
+            lv = dict(zip(ordered_field_names, lt))
             for k, v in av.items():
                 assert k in lv
                 assert lv[k] == (convert_nanos_to_datetime(v) if datetime_flags[k] else v)
