@@ -25,23 +25,29 @@ __email__ = "leif@twosigma.com"
 
 
 import io
+import json
 
 from   . import _lancaster
 
 
-def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE, datetime_flags=None):
+def _get_datetime_flags(schema):
+    jschema = json.loads(schema)
+    return [field.get('is_datetime', False) for field in jschema['fields']]
+
+
+def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
-    :param str schema: json string representing the Avro schema
+    :param str schema: json string representing the Avro schema, field
+                       names may include 'is_datetime' boolean fields
+                       to force decoding long values of epoch nanoseconds
+                       into datetime objects
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
-    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :return: yields a sequence of python data structures deserialized from the stream
+
     """
-    if datetime_flags is not None:
-        reader = _lancaster.Reader(schema, datetime_flags)
-    else:
-        reader = _lancaster.Reader(schema)
+    reader = _lancaster.Reader(schema, _get_datetime_flags(schema))
     buf = stream.read(buffer_size)
     remainder = b''
     while len(buf) > 0:
@@ -58,24 +64,23 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE, datetime_
         raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
 
 
-def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE, datetime_flags=None):
+def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values
     into tuples.
 
     This assumes the input is avro records of simple values (numbers,
     strings, etc.).
 
-    :param str schema: json string representing the Avro schema
+    :param str schema: json string representing the Avro schema, field
+                       names may include 'is_datetime' boolean fields
+                       to force decoding long values of epoch nanoseconds
+                       into datetime objects
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
-    :param datetime_flags: a list of boolean flags determining if whether a field is a long value of nanoseconds representing a datetime value or not
     :return: yields a sequence of python tuples deserialized from the stream
 
     """
-    if datetime_flags is not None:
-        reader = _lancaster.Reader(schema, datetime_flags)
-    else:
-        reader = _lancaster.Reader(schema)
+    reader = _lancaster.Reader(schema, _get_datetime_flags(schema))
     buf = stream.read(buffer_size)
     remainder = b''
     while len(buf) > 0:
