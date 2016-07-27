@@ -1,9 +1,9 @@
 package:
   name: lancaster
-  version: {{ environ.get('GIT_DESCRIBE_TAG') }}
+  version: {{ GIT_DESCRIBE_TAG }}
  
 source:
-  git_url: ../../.git
+  git_url: ../..
 
 requirements:
   build:
@@ -15,6 +15,9 @@ requirements:
     - libavro
 
 build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
+  string: py{{py}}{% if GIT_DESCRIBE_NUMBER != '0' %}_{{ GIT_BUILD_STR }}{% endif %}
+
   script:
     - python setup.py install
 
@@ -25,7 +28,7 @@ test:
   files:
     - ../../test/test_bench.py
   commands:
-    - py.test
+    - py.test -v
 
 about:
   home: https://github.com/twosigma/lancaster
