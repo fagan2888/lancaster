@@ -1,20 +1,25 @@
 package:
   name: libavro
-  version: 1.7.7
+  version: 1.8.1
 
 source:
-  fn: avro-c-1.7.7.tar.gz
-  url: http://apache.arvixe.com/avro/avro-1.7.7/c/avro-c-1.7.7.tar.gz
-
-  patches:
-    - snappy.patch
+  fn: avro-c-1.8.1.tar.gz
+  url: http://www.trieuvan.com/apache/avro/avro-1.8.1/c/avro-c-1.8.1.tar.gz
 
 requirements:
   build:
     - cmake
+    - jansson
     - libsnappy
   run:
+    - jansson
     - libsnappy
 
 build:
   number: 1
+
+about:
+  home: http://avro.apache.org
+  license: Apache License v2.0
+  license_file: LICENSE
+  summary: Apache Avro™ is a data serialization system.

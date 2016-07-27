@@ -22,7 +22,19 @@ python versions of the avro data (dicts, lists, ints, strings).
 Installation
 ------------
 
-A conda package is provided at [anaconda.org][anaconda].
+A conda package is provided at [anaconda.org][anaconda].  This depends
+on conda packages providing the C libraries required, `libsnappy`,
+`jansson`, and `libavro-c`.
+
+    conda create -n lancaster -c leif python lancaster
+
+You can also install using just setuptools, assuming you have `avro-c`
+installed on your system, which you can probably get from your OS
+package manager.
+
+    git clone https://github.com/twosigma/lancaster
+    cd lancaster
+    python setup.py install
 
 Caveats
 -------
