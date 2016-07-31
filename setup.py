@@ -22,11 +22,18 @@ try:
 except subprocess.CalledProcessError:
     extension_kwargs = {'libraries': ['avro', 'z', 'lzma', 'snappy']}
 
-setup(name        = 'Lancaster',
-      version     = versioneer.get_version(),
-      cmdclass    = versioneer.get_cmdclass(),
-      description = 'A python extension wrapper for avro-c',
-      packages    = ['lancaster'],
-      ext_modules = [Extension('lancaster._lancaster',
-                               sources = ['lancaster/_lancaster.c'],
-                               **extension_kwargs)])
+setup(name         = 'lancaster',
+      version      = versioneer.get_version(),
+      cmdclass     = versioneer.get_cmdclass(),
+      author       = 'Leif Walsh',
+      author_email = 'leif@twosigma.com',
+      license      = 'MIT',
+      url          = 'https://github.com/twosigma/lancaster',
+      download_url = 'https://github.com/twosigma/lancaster/tarball/{}'.format(versioneer.get_version()),
+      description  = 'A python extension wrapper for avro-c',
+      packages     = ['lancaster'],
+      ext_modules  = [Extension('lancaster._lancaster',
+                                sources = ['lancaster/_lancaster.c'],
+                                **extension_kwargs)],
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest'])
