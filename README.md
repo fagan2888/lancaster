@@ -4,7 +4,9 @@ lancaster
 A python extension wrapper for [avro-c][avro-c].
 
 Currently only supports reading a stream of avro serialized data.
-Does not support writing, nor the avro container format.
+Does not support writing, nor the avro container format.  For more
+details on what lancaster is willing to read, see the
+[lancaster spec](docs/spec.md).
 
 See also [the Avro project page][avro].
 
