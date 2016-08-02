@@ -30,10 +30,14 @@ on conda packages providing the C libraries required, `libsnappy`,
 
     conda create -n lancaster -c leif python lancaster
 
-You can also install using just setuptools, assuming you have `avro-c`
-and `libsnappy` installed on your system, which you can probably get
-from your OS package manager.  On debian and ubuntu systems, you can
-install `libavro-dev` and `libsnappy-dev`.
+You can also install using just pip or setuptools, assuming you have
+`avro-c` and `libsnappy` installed on your system, which you can
+probably get from your OS package manager.  On debian and ubuntu
+systems, you can install `libavro-dev` and `libsnappy-dev`.
+
+    pip install lancaster
+
+or
 
     git clone https://github.com/twosigma/lancaster
     cd lancaster
