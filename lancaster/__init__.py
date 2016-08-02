@@ -19,9 +19,13 @@ with open('data.avro', 'rb') as f:
 __author__ = "Leif Walsh"
 __copyright__ = "Copyright 2016 Two Sigma Open Source, LLC."
 __license__ = "MIT"
-__version__ = "0.3.0"
 __maintainer__ = "Leif Walsh"
 __email__ = "leif@twosigma.com"
+
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
 
 
 import io
@@ -92,3 +96,4 @@ def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
             buf = memoryview(ba).tobytes()
     if len(remainder) > 0:
         raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
+

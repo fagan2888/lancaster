@@ -1,6 +1,7 @@
 .cache/
 .eggs/
-Lancaster.egg-info/
+lancaster.egg-info/
 build/
 dist/
 *.so
+.coverage

@@ -1,0 +1,20 @@
+package:
+  name: jansson
+  version: 2.7
+
+source:
+  fn: jansson-2.7.tar.gz
+  url: http://www.digip.org/jansson/releases/jansson-2.7.tar.bz2
+
+requirements:
+  build:
+    - cmake
+
+build:
+  number: 1
+
+about:
+  home: http://www.digip.org/jansson/
+  license: MIT
+  license_file: LICENSE
+  summary: Jansson is a C library for encoding, decoding and manipulating JSON data.
