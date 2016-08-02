@@ -31,18 +31,18 @@ else:
     setup_requires = ['pytest-runner']
     tests_require = ['pytest']
 
-setup(name         = 'lancaster',
-      version      = versioneer.get_version(),
-      cmdclass     = versioneer.get_cmdclass(),
-      author       = 'Leif Walsh',
-      author_email = 'leif@twosigma.com',
-      license      = 'MIT',
-      url          = 'https://github.com/twosigma/lancaster',
-      download_url = 'https://github.com/twosigma/lancaster/tarball/{}'.format(versioneer.get_version()),
-      description  = 'A python extension wrapper for avro-c',
-      packages     = ['lancaster'],
-      ext_modules  = [Extension('lancaster._lancaster',
-                                sources = ['lancaster/_lancaster.c'],
-                                **extension_kwargs)],
-      setup_requires=setup_requires,
-      tests_require=tests_require)
+setup(name           = 'lancaster',
+      version        = versioneer.get_version(),
+      cmdclass       = versioneer.get_cmdclass(),
+      author         = 'Leif Walsh',
+      author_email   = 'leif@twosigma.com',
+      license        = 'MIT',
+      url            = 'https://github.com/twosigma/lancaster',
+      download_url   = 'https://github.com/twosigma/lancaster/tarball/{}'.format(versioneer.get_version()),
+      description    = 'A python extension wrapper for avro-c',
+      packages       = ['lancaster'],
+      ext_modules    = [Extension('lancaster._lancaster',
+                                  sources = ['lancaster/_lancaster.c'],
+                                  **extension_kwargs)],
+      setup_requires = setup_requires,
+      tests_require  = tests_require)
