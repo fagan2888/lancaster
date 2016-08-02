@@ -1,0 +1,40 @@
+language: python
+sudo: false
+
+env:
+  matrix:
+    - PYTHON=3.3 COVERAGE='false'
+    - PYTHON=3.4 COVERAGE='false'
+    - PYTHON=3.5 COVERAGE='true'
+
+addons:
+  apt:
+    packages:
+      - libavro-dev
+      - libsnappy-dev
+
+install:
+  # Install conda
+  - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update conda
+
+  # Install dependencies
+  - conda create -n test-environment python=$PYTHON
+  - source activate test-environment
+  - conda install pytest coverage
+  - pip install avro-python3
+
+  # Install lancaster
+  - pip install --no-deps -e .
+
+script:
+  - if [[ $COVERAGE == 'true' ]]; then coverage run $(which py.test) --verbose; else py.test --verbose; fi
+
+after_success:
+  - if [[ $coverage == 'true' ]]; then coverage report --show-missing; pip install coveralls ; coveralls ; fi
+
+notifications:
+  email: false
