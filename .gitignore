@@ -4,3 +4,4 @@ lancaster.egg-info/
 build/
 dist/
 *.so
+.coverage
