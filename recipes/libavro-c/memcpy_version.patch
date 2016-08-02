@@ -1,0 +1,86 @@
+--- src/allocation.c	2016-08-02 14:30:33.167027656 -0400
++++ src/allocation.c	2016-08-02 14:32:53.599028014 -0400
+@@ -23,6 +23,8 @@
+ #include "avro/data.h"
+ #include "avro/legacy.h"
+ 
++#include "avro/memcpy_version.h"
++
+ static void *
+ avro_default_allocator(void *ud, void *ptr, size_t osize, size_t nsize)
+ {
+--- src/codec.c	2016-08-02 14:30:33.171027656 -0400
++++ src/codec.c	2016-08-02 14:33:14.923028068 -0400
+@@ -35,6 +35,8 @@
+ #include "avro/allocation.h"
+ #include "codec.h"
+ 
++#include "avro/memcpy_version.h"
++
+ #define DEFAULT_BLOCK_SIZE	(16 * 1024)
+ 
+ /* NULL codec */
+--- src/datum.c	2016-08-02 14:30:33.175027656 -0400
++++ src/datum.c	2016-08-02 14:33:22.295028087 -0400
+@@ -29,6 +29,8 @@
+ #include "schema.h"
+ #include "encoding.h"
+ 
++#include "avro/memcpy_version.h"
++
+ #define DEFAULT_TABLE_SIZE 32
+ 
+ static void avro_datum_init(avro_datum_t datum, avro_type_t type)
+--- src/generic.c	2016-08-02 14:30:33.179027656 -0400
++++ src/generic.c	2016-08-02 14:33:28.287028102 -0400
+@@ -29,6 +29,8 @@
+ #include "avro_generic_internal.h"
+ #include "avro_private.h"
+ 
++#include "avro/memcpy_version.h"
++
+ 
+ /*-----------------------------------------------------------------------
+  * Forward definitions
+--- src/io.c	2016-08-02 14:30:33.179027656 -0400
++++ src/io.c	2016-08-02 14:33:34.311028118 -0400
+@@ -26,6 +26,8 @@
+ #include <string.h>
+ #include "dump.h"
+ 
++#include "avro/memcpy_version.h"
++
+ enum avro_io_type_t {
+ 	AVRO_FILE_IO,
+ 	AVRO_MEMORY_IO
+--- src/string.c	2016-08-02 14:30:33.183027656 -0400
++++ src/string.c	2016-08-02 14:33:40.039028132 -0400
+@@ -24,6 +24,8 @@
+ #include "avro/allocation.h"
+ #include "avro/errors.h"
+ 
++#include "avro/memcpy_version.h"
++
+ #ifndef AVRO_STRING_DEBUG
+ #define AVRO_STRING_DEBUG 0
+ #endif
+--- src/wrapped-buffer.c	2016-08-02 14:30:33.187027656 -0400
++++ src/wrapped-buffer.c	2016-08-02 14:33:45.607028147 -0400
+@@ -24,6 +24,8 @@
+ #include "avro/data.h"
+ #include "avro/refcount.h"
+ 
++#include "avro/memcpy_version.h"
++
+ struct avro_wrapped_copy {
+ 	volatile int  refcount;
+ 	size_t  allocated_size;
+--- /dev/null	2016-07-15 11:07:05.163506816 -0400
++++ src/avro/memcpy_version.h	2016-08-02 14:35:54.787028476 -0400
+@@ -0,0 +1,6 @@
++#ifndef AVRO_MEMCPY_VERSION_H
++#define AVRO_MEMCPY_VERSION_H
++
++__asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
++
++#endif  /* AVRO_MEMCPY_VERSION_H */

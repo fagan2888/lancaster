@@ -5,6 +5,8 @@ package:
 source:
   fn: avro-c-1.8.1.tar.gz
   url: http://www.trieuvan.com/apache/avro/avro-1.8.1/c/avro-c-1.8.1.tar.gz
+  patches:
+    - memcpy_version.patch
 
 requirements:
   build:
@@ -16,7 +18,7 @@ requirements:
     - libsnappy
 
 build:
-  number: 1
+  number: 3
 
 about:
   home: http://avro.apache.org

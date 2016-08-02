@@ -1,0 +1,21 @@
+--- CMakeLists.txt  2016-08-02 14:11:57.391024812 -0400
++++ CMakeLists.txt  2016-08-02 14:12:09.635024844 -0400
+@@ -301,7 +301,7 @@
+ endif(NOT DEFINED CMAKE_INSTALL_LIBDIR)
+ set(prefix      ${CMAKE_INSTALL_PREFIX})
+ set(exec_prefix ${CMAKE_INSTALL_PREFIX})
+-set(libdir      ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
++set(_libdir     ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+ set(VERSION     ${JANSSON_DISPLAY_VERSION})
+ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/jansson.pc.in
+                ${CMAKE_CURRENT_BINARY_DIR}/jansson.pc @ONLY)
+--- jansson.pc.in   2016-08-02 14:12:19.983024870 -0400
++++ jansson.pc.in   2016-08-02 14:12:30.971024898 -0400
+@@ -1,6 +1,6 @@
+ prefix=@prefix@
+ exec_prefix=@exec_prefix@
+-libdir=@libdir@
++libdir=@_libdir@
+ includedir=${prefix}/include
+ 
+ Name: Jansson

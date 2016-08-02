@@ -1,0 +1,53 @@
+--- /dev/null	2016-07-15 11:07:05.163506816 -0400
++++ src/memcpy_version.h	2016-08-02 14:46:27.419030088 -0400
+@@ -0,0 +1,6 @@
++#ifndef AVRO_MEMCPY_VERSION_H
++#define AVRO_MEMCPY_VERSION_H
++
++__asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
++
++#endif  /* AVRO_MEMCPY_VERSION_H */
+--- src/jansson_private.h	2016-08-02 14:49:06.883030494 -0400
++++ src/jansson_private.h	2016-08-02 14:49:19.511030527 -0400
+@@ -13,6 +13,8 @@
+ #include "hashtable.h"
+ #include "strbuffer.h"
+ 
++#include "memcpy_version.h"
++
+ #define container_of(ptr_, type_, member_)  \
+     ((type_ *)((char *)ptr_ - offsetof(type_, member_)))
+ 
+--- src/memory.c	2016-08-02 14:49:43.331030587 -0400
++++ src/memory.c	2016-08-02 14:50:10.455030656 -0400
+@@ -12,6 +12,8 @@
+ #include "jansson.h"
+ #include "jansson_private.h"
+ 
++#include "memcpy_version.h"
++
+ /* C89 allows these to be macros */
+ #undef malloc
+ #undef free
+--- src/strbuffer.c	2016-08-02 14:49:37.947030574 -0400
++++ src/strbuffer.c	2016-08-02 14:50:06.439030646 -0400
+@@ -14,6 +14,8 @@
+ #include "jansson_private.h"
+ #include "strbuffer.h"
+ 
++#include "memcpy_version.h"
++
+ #define STRBUFFER_MIN_SIZE  16
+ #define STRBUFFER_FACTOR    2
+ #define STRBUFFER_SIZE_MAX  ((size_t)-1)
+--- src/value.c	2016-08-02 14:49:31.323030557 -0400
++++ src/value.c	2016-08-02 14:50:02.351030636 -0400
+@@ -27,6 +27,8 @@
+ #include "jansson_private.h"
+ #include "utf.h"
+ 
++#include "memcpy_version.h"
++
+ /* Work around nonstandard isnan() and isinf() implementations */
+ #ifndef isnan
+ #ifndef __sun

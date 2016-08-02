@@ -1,0 +1,53 @@
+--- snappy.cc	2016-08-02 14:54:16.427031283 -0400
++++ snappy.cc	2016-08-02 14:56:00.415031548 -0400
+@@ -30,6 +30,8 @@
+ #include "snappy-internal.h"
+ #include "snappy-sinksource.h"
+ 
++#include "memcpy_version.h"
++
+ #include <stdio.h>
+ 
+ #include <algorithm>
+--- snappy-sinksource.cc	2016-08-02 14:54:36.823031335 -0400
++++ snappy-sinksource.cc	2016-08-02 14:56:04.931031560 -0400
+@@ -30,6 +30,8 @@
+ 
+ #include "snappy-sinksource.h"
+ 
++#include "memcpy_version.h"
++
+ namespace snappy {
+ 
+ Source::~Source() { }
+--- snappy-stubs-internal.h	2016-08-02 14:54:26.563031309 -0400
++++ snappy-stubs-internal.h	2016-08-02 14:56:15.135031586 -0400
+@@ -47,6 +47,8 @@
+ 
+ #include "snappy-stubs-public.h"
+ 
++#include "memcpy_version.h"
++
+ #if defined(__x86_64__)
+ 
+ // Enable 64-bit optimized versions of some routines.
+--- snappy_unittest.cc	2016-08-02 14:54:48.427031365 -0400
++++ snappy_unittest.cc	2016-08-02 14:56:20.531031600 -0400
+@@ -39,6 +39,8 @@
+ #include "snappy-test.h"
+ #include "snappy-sinksource.h"
+ 
++#include "memcpy_version.h"
++
+ DEFINE_int32(start_len, -1,
+              "Starting prefix size for testing (-1: just full file contents)");
+ DEFINE_int32(end_len, -1,
+--- /dev/null	2016-07-15 11:07:05.163506816 -0400
++++ memcpy_version.h	2016-08-02 14:55:19.959031445 -0400
+@@ -0,0 +1,6 @@
++#ifndef AVRO_MEMCPY_VERSION_H
++#define AVRO_MEMCPY_VERSION_H
++
++__asm__(".symver memcpy,memcpy@GLIBC_2.2.5");
++
++#endif  /* AVRO_MEMCPY_VERSION_H */

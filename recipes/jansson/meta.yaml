@@ -5,13 +5,19 @@ package:
 source:
   fn: jansson-2.7.tar.gz
   url: http://www.digip.org/jansson/releases/jansson-2.7.tar.bz2
+  patches:
+    # For some reason, jansson's generated pkg-config file expands @libdir@ to
+    # something more than it should be.  By renaming it, we get cmake to do the
+    # right thing.
+    - cmake_libdir.patch
+    - memcpy_version.patch
 
 requirements:
   build:
     - cmake
 
 build:
-  number: 1
+  number: 3
 
 about:
   home: http://www.digip.org/jansson/
