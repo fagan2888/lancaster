@@ -16,7 +16,7 @@ requirements:
 
 build:
   number: {{ GIT_DESCRIBE_NUMBER }}
-  string: py{{py}}{% if GIT_DESCRIBE_NUMBER != '0' %}_{{ GIT_BUILD_STR }}{% endif %}
+  string: {% if GIT_DESCRIBE_NUMBER != '0' %}{{ GIT_BUILD_STR }}_{% endif %}py{{py}}
 
   script:
     - python setup.py install
@@ -26,7 +26,7 @@ test:
     - avro-python3
     - pytest
   files:
-    - ../../test/test_bench.py
+    - ../../lancaster/tests/test_bench.py
   commands:
     - py.test -v
 

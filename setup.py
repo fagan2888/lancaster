@@ -22,6 +22,15 @@ try:
 except subprocess.CalledProcessError:
     extension_kwargs = {'libraries': ['avro', 'z', 'lzma', 'snappy']}
 
+# When building with conda, we shouldn't tell setuptools to install
+# additional dependencies, and we don't need pytest-runner at all.
+if 'CONDA_BUILD' in os.environ:
+    setup_requires = []
+    tests_require = []
+else:
+    setup_requires = ['pytest-runner']
+    tests_require = ['pytest']
+
 setup(name         = 'lancaster',
       version      = versioneer.get_version(),
       cmdclass     = versioneer.get_cmdclass(),
@@ -35,5 +44,5 @@ setup(name         = 'lancaster',
       ext_modules  = [Extension('lancaster._lancaster',
                                 sources = ['lancaster/_lancaster.c'],
                                 **extension_kwargs)],
-      setup_requires=['pytest-runner'],
-      tests_require=['pytest'])
+      setup_requires=setup_requires,
+      tests_require=tests_require)
