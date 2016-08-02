@@ -274,7 +274,7 @@ long_to_datetime(PyObject *py_nanos) {
     // localtime_r is posix standard and thread-safe but not a C standard function.
     localtime_r(&epoch_1900_secs, &t);
     // PyDateTime_FromDateAndTime(int year, int month, int day, int hour, int minute, int second, int usecond)
-    // performans much better than PyDateTime_FromTimestamp(PyObject *args)
+    // performance is much better than PyDateTime_FromTimestamp(PyObject *args)
     return PyDateTime_FromDateAndTime(t.tm_year + 1900, t.tm_mon + 1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec, usecs);
 }
 
