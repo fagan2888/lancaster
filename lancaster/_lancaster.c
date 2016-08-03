@@ -317,7 +317,7 @@ avro_to_tuple(avro_schema_t schema, avro_value_t *value, const int *datetime_fla
             }
             check(decref_tuple, avro_value_get_by_index(value, i, &field_val, &name));
             PyObject *py_field_val = avro_to_simple_value(field_schema, &field_val);
-            if (datetime_flags != NULL && datetime_flags[i]) {
+            if (datetime_flags != NULL && datetime_flags[i] && py_field_val != Py_None) {
                 PyObject *datetime = long_to_datetime(py_field_val);
                 Py_DECREF(py_field_val);
                 py_field_val = datetime;
