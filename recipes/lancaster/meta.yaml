@@ -24,11 +24,8 @@ build:
 test:
   requires:
     - avro-python3
-    - pytest
-  files:
-    - ../../lancaster/tests/test_bench.py
   commands:
-    - py.test -v
+    - cd $SRC_DIR && python setup.py test
 
 about:
   home: https://github.com/twosigma/lancaster

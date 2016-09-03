@@ -16,22 +16,21 @@ with open('data.avro', 'rb') as f:
 
 """
 
-__author__ = "Leif Walsh"
-__copyright__ = "Copyright 2016 Two Sigma Open Source, LLC."
-__license__ = "MIT"
-__maintainer__ = "Leif Walsh"
-__email__ = "leif@twosigma.com"
+import io
+import json
 
+from . import _lancaster
 
 from ._version import get_versions
 __version__ = get_versions()['version']
 del get_versions
 
 
-import io
-import json
-
-from   . import _lancaster
+__author__ = "Leif Walsh"
+__copyright__ = "Copyright 2016 Two Sigma Open Source, LLC."
+__license__ = "MIT"
+__maintainer__ = "Leif Walsh"
+__email__ = "leif@twosigma.com"
 
 
 def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
@@ -40,7 +39,8 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     :param str schema: json string representing the Avro schema
     :param stream: a buffered stream of binary input
     :param buffer_size: size of bytes to read from the stream each time
-    :return: yields a sequence of python data structures deserialized from the stream
+    :return: yields a sequence of python data structures deserialized
+        from the stream
 
     """
     reader = _lancaster.Reader(schema)
@@ -57,7 +57,8 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
             ba.extend(buf)
             buf = memoryview(ba).tobytes()
     if len(remainder) > 0:
-        raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
+        raise EOFError('{} bytes remaining but could not continue reading '
+                       'from stream'.format(len(remainder)))
 
 
 def _get_datetime_flags(schema):
@@ -95,5 +96,5 @@ def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
             ba.extend(buf)
             buf = memoryview(ba).tobytes()
     if len(remainder) > 0:
-        raise EOFError('{} bytes remaining but could not continue reading from stream'.format(len(remainder)))
-
+        raise EOFError('{} bytes remaining but could not continue reading '
+                       'from stream'.format(len(remainder)))
