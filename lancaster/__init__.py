@@ -8,11 +8,11 @@ serialized values, of unknown size.
 
 lancaster does not support writing, nor recursive data structures.
 
-:Example:
+Example:
 
-with open('data.avro', 'rb') as f:
-    schema = '{ ... }'
-    data = list(lancaster.read_stream(schema, f))
+    >>> with open('data.avro', 'rb') as f:
+    ...     schema = '{ ... }'
+    ...     data = list(lancaster.read_stream(schema, f))
 
 """
 
@@ -37,8 +37,8 @@ def read_stream(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     """Using a schema, deserialize a stream of consecutive Avro values.
 
     :param str schema: json string representing the Avro schema
-    :param stream: a buffered stream of binary input
-    :param buffer_size: size of bytes to read from the stream each time
+    :param file-like stream: a buffered stream of binary input
+    :param int buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python data structures deserialized
         from the stream
 
@@ -74,11 +74,11 @@ def read_stream_tuples(schema, stream, *, buffer_size=io.DEFAULT_BUFFER_SIZE):
     strings, etc.).
 
     :param str schema: json string representing the Avro schema, field
-                       names may include 'is_datetime' boolean fields
-                       to force decoding long values of epoch nanoseconds
-                       into datetime objects
-    :param stream: a buffered stream of binary input
-    :param buffer_size: size of bytes to read from the stream each time
+        names may include 'is_datetime' boolean fields to force
+        decoding long values of epoch nanoseconds into datetime
+        objects
+    :param file-like stream: a buffered stream of binary input
+    :param int buffer_size: size of bytes to read from the stream each time
     :return: yields a sequence of python tuples deserialized from the stream
 
     """
